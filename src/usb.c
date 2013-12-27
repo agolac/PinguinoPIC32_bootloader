@@ -1,7 +1,7 @@
 /*	----------------------------------------------------------------------------
 	FILE:				usb.c
 	PROJECT:			pinguino - http://www.pinguino.cc/
-	PURPOSE:			Bootloader for 32 bit Pinguino boards
+	PURPOSE:			Pinguino PIC32 USB
 	PROGRAMER:			Andrej Golac <andrej.golac@runbox.com>
 	FIRST RELEASE:			January 2014
 	LAST RELEASE:

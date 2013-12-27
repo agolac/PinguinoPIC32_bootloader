@@ -18,4 +18,5 @@ CFLAGS=	-EL -Os -march=$(ARCH) \
 bootloader:
 	$(CC) $(INCDIR) $(CFLAGS) -o bootloader src/main.c \
 			include/non-free/32MX440F256H/processor.o \
-			src/crt0.S
+			src/crt0.S \
+			src/usb.c

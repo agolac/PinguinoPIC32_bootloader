@@ -33,7 +33,7 @@ USB_Device_descriptor.bcdUSB			= 0x0200; // 0200h for USB 2.0
 USB_Device_descriptor.bDeviceClass		= 0x00;	  // Zero for no device class
 USB_Device_descriptor.bDeviceSubclass		= 0x00;	  // Zero for no device subclass
 USB_Device_descriptor.bDeviceProtocol		= 0x00;	  // Zero for no device protocol
-USB_Device_descriptor.bMaxPacketSize0		= 0x08;	  // Max packet size
+USB_Device_descriptor.bMaxPacketSize0		= 0x08;	  // Endpoint zero max packet size
 USB_Device_descriptor.idVendor			= 0x04D8; // Microchip idVendor
 USB_Device_descriptor.idProduct			= 0x003C; // Microchip idProduct
 USB_Device_descriptor.bcdDevice			= 0x0002; // Microchip device release number
@@ -47,9 +47,7 @@ configuration_descriptor USB_Configuration_descriptor;
 
 USB_Configuration_descriptor.bLength		= 0x09; // Descriptor size in bytes
 USB_Configuration_descriptor.bDescriptorType	= 0x02; // 02h constant for Configuration descriptor
-USB_Configuration_descriptor.wTotalLength	= sizeof(configuration_descriptor) + \
-						  sizeof(interface_descriptor) + \
-						  sizeof(endpoint_descriptor);
+USB_Configuration_descriptor.wTotalLength	= 0x029;// Total length of this and subordinate descript.
 USB_Configuration_descriptor.bNumInterfaces	= 0x01; // 01h for only one interface
 USB_Configuration_descriptor.bConfigurationValue= 0x01; // 01h for this configuration
 USB_Configuration_descriptor.iConfiguration	= 0x00; // Zero if no string descriptor
@@ -62,20 +60,38 @@ USB_Interface_descriptor.bLength		= 0x09; // Descriptor size in bytes
 USB_Interface_descriptor.bDescriptorType	= 0x04; // 04h constant for Interface descriptor
 USB_Interface_descriptor.bInterfaceNumber	= 0x00; // Zero for default interface number
 USB_Interface_descriptor.bAlternateSetting	= 0x00; // No alternate setting
-USB_Interface_descriptor.bNumEndpoints		= 0x01;	// Endpoints in addition to zero endpoint
+USB_Interface_descriptor.bNumEndpoints		= 0x02;	// Endpoints in addition to zero endpoint
 USB_Interface_descriptor.bInterfaceClass	= 0x03;	// 03h is for HID interface
 USB_Interface_descriptor.bInterfaceSubclass	= 0x00; // Zero if defined bInterfaceClass
 USB_Interface_descriptor.bInterfaceProtocol	= 0x00; // Zero if defined bInterfaceClass
 USB_Interface_descriptor.iInterface		= 0x00; // Zero if no string descriptor
 
+hid_descriptor USB_HID_descriptor;
+
+USB_HID_descriptor.bLength			= 0x09;	// Descriptor size in bytes
+USB_HID_descriptor.bDescriptorType		= 0x21; // 21h constant for HID descriptor
+USB_HID_descriptor.bcdHID			= 0x0110;// HID Spec. release number (BCD) (1.1)
+USB_HID_descriptor.bCountryCode			= 0x00;	// Country Code
+USB_HID_descriptor.bNumDescriptors		= 0x01; // Number of subordinate class descriptors
+USB_HID_descriptor.bDescriptortype		= 0x22;	// 22h report descriptor type 
+
 endpoint_descriptor USB_Endpoint_descriptor_OUT;
 
 USB_Endpoint_descriptor_OUT.bLength		= 0x07; // Descriptor size in bytes
 USB_Endpoint_descriptor_OUT.bDescriptorType	= 0x05; // 05h constant for Endpoint descriptor
-USB_Endpoint_descriptor_OUT.bEndpointAddress	= 0x01; // 00000001b, Addr=1, Bit 7=0=OUT 
+USB_Endpoint_descriptor_OUT.bEndpointAddress	= 0x01; // 00000001b, Endpoint number=1, Bit 7=0=OUT 
 USB_Endpoint_descriptor_OUT.bmAttributes	= 0x03; // Innterrupt transfer
-USB_Endpoint_descriptor_OUT.wMaxPacketSize	= 0x0008;// 8 bytes max packet size
-USB_Endpoint_descriptor_OUT.bInterval		= 1;	// Interval 1 ms
+USB_Endpoint_descriptor_OUT.wMaxPacketSize	= 0x0040;// 64 bytes max packet size
+USB_Endpoint_descriptor_OUT.bInterval		= 0x0A;	// Interval 10 ms
+
+endpoint_descriptor USB_Endpoint_descriptor_IN;
+
+USB_Endpoint_descriptor_IN.bLength		= 0x07;	// Descriptor size in bytes
+USB_Endpoint_descriptor_IN.bDescriptorType	= 0x05;	// 05h constant for ENDPOINT descriptor
+USB_Endpoint_descriptor_IN.bEndpointAddress	= 0x81;	// 10000001b, Endpoint number=1, Bit 7=1=IN
+USB_Endpoint_descriptor_IN.bmAttributes		= 0x03; // Interrupt transfer
+USB_Endpoint_descriptor_IN.wMaxPacketSize	= 0x0040;// 64 bytes max packet size
+USB_Endpoint_descriptor_IN.bInterval		= 0x0A;	// Interval 10 ms
 
 string_descriptor USB_String_Manufacturer;
 
@@ -94,4 +110,12 @@ string_descriptor USB_String_Serial;
 USB_String_Serial.bLength			= sizeof (USB_String_Serial);
 USB_String_Serial.bDescriptorType		= 0x03;
 USB_String_Serial.bSTRING[4]			= 'v','1','.','0';
+
+
+U1PWRCbits.USBPWR = 1; 	// -> Start USB clock
+			// -> Allow USB interrupt to be activated
+			// -> Select USB as owner of the necessary USB pins
+			// -> Enable USB transciever
+			// -> Enable USB comparators
+
 }

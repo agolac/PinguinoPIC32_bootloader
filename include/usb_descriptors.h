@@ -107,6 +107,16 @@ typedef struct {
       uint16_t	bSTRING[];		// String
 } string_descriptor;
 
+typedef struct {
+	int8_t	bLength;		// Descriptor size in bytes (09h)
+	int8_t	bDescriptorType;	// The constant for HID (21h)
+	int16_t	bcdHID;			// HID Spec. release number (BCD)
+	int8_t	bCountryCode;		// Country Code
+	int8_t	bNumDescriptors;	// Number of subordinate class descriptors
+	int8_t	bDescriptortype;	// Descriptor Type
+	int16_t	wDescriptorLength;	// Report descriptor size in bytes
+} hid_descriptor;
+
 enum ControlTransferRequest {
 	GET_STATUS		= 0x00,
 	CLEAR_FEATURE		= 0x01,

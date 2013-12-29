@@ -28,7 +28,6 @@
 int main (void) {
 
 while (1) {
-	U1PWRCbits.USBPWR = 1; // Start USB
 	TRISBSET = 0x0080;
 return 1;
 }

@@ -50,7 +50,7 @@ Example of descriptor configuration tree
 
 #include <stdint.h>
 
-typedef struct {
+typedef struct __attribute__((packed))__ {
         int8_t  bLength;                // Descriptor size in bytes (12h)
         int8_t  bDescriptorType;        // The constant DEVICE (01h)
         int16_t bcdUSB;                 // USB specification release number (BCD)
@@ -67,7 +67,7 @@ typedef struct {
         int8_t  bNumConfigurations;     // Number of possible configurations
 } device_descriptor;
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
 	int8_t	bLength;		// Descriptor size in bytes (09h)
 	int8_t	bDescriptorType;	// The constant CONFIGURATION (02h)
 	int16_t wTotalLength;		// The Number of bytes in configuration descriptor
@@ -79,7 +79,7 @@ typedef struct {
 	int8_t	bMaxPower;		// Bus power req. in units of 2 mA (USB2.0) or 8 mA (Superspeed)
 } configuration_descriptor;
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
 	int8_t	bLength;		// Descriptor size in bytes (08h)
 	int8_t	bDescriptorType;	// The constant INTERFACE (04h)
 	int8_t	bInterfaceNumber;	// Number identifying this interface
@@ -92,7 +92,7 @@ typedef struct {
 	int8_t	iInterface;		// Index of string descriptor for interface
 } interface_descriptor;
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
 	int8_t	bLength;		// Descriptor size in bytes (07h)
 	int8_t	bDescriptorType;	// The constant ENPOINT (05h)
 	int8_t	bEndpointAddress;	// Endpoint number and direction
@@ -101,13 +101,13 @@ typedef struct {
 	int8_t	bInterval;		// Service interval or NAK (Not Aknowledged) rate
 } endpoint_descriptor;
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
 	int8_t	bLength;		// Descriptor size in bytes (variable)
 	int8_t	bDescriptorType;	// The constand STRING (03h)
       uint16_t	bSTRING[];		// String
 } string_descriptor;
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
 	int8_t	bLength;		// Descriptor size in bytes (09h)
 	int8_t	bDescriptorType;	// The constant for HID (21h)
 	int16_t	bcdHID;			// HID Spec. release number (BCD)

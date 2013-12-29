@@ -23,6 +23,9 @@
 
 #include <usb_descriptors.h>
 #include <stdint.h>
+#include <xc.h>
+#include <usb_hal.h>
+
 void InitUSB (void) {
 
 device_descriptor USB_Device_descriptor;
@@ -111,11 +114,18 @@ USB_String_Serial.bLength			= sizeof (USB_String_Serial);
 USB_String_Serial.bDescriptorType		= 0x03;
 USB_String_Serial.bSTRING[4]			= 'v','1','.','0';
 
+U1PWRCbits.USBPWR = 1; 	// - Start USB clock
+			// - Allow USB interrupt to be activated
+			// - Select USB as owner of the necessary USB pins
+			// - Enable USB transciever
+			// - Enable USB comparators
+IEC1bits.USBIE = 0;	// Just in case, disable USB interrupts before initialization
 
-U1PWRCbits.USBPWR = 1; 	// -> Start USB clock
-			// -> Allow USB interrupt to be activated
-			// -> Select USB as owner of the necessary USB pins
-			// -> Enable USB transciever
-			// -> Enable USB comparators
+U1OTGCONbits.OTGEN = 0;	// Disable OTG
+U1CONbits.HOSTEN = 0;	// Disabled as host
+
+buffer_descriptor USB_BDT[12] __attribute__ ((aligned(512)))={0};
+
+U1CONbits.USBEN = 1;	// Enable USB
 
 }

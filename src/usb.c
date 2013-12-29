@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include <xc.h>
 #include <usb_hal.h>
+#include <config.h>
 
 void InitUSB (void) {
 
@@ -124,7 +125,18 @@ IEC1bits.USBIE = 0;	// Just in case, disable USB interrupts before initializatio
 U1OTGCONbits.OTGEN = 0;	// Disable OTG
 U1CONbits.HOSTEN = 0;	// Disabled as host
 
-buffer_descriptor USB_BDT[12] __attribute__ ((aligned(512)))={0};
+static buffer_descriptor USB_BDT[12] __attribute__ ((aligned(512)))={0};
+uint32_t USB_BDT_BASE_ADDRESS;
+USB_BDT_BASE_ADDRESS = VIRTUAL_TO_PHYSICAL(USB_BDT);
+
+// According to PIC32 Family Reference manual following registers hold base address bits
+// BDTPTRL (7 bit with bit 0 unimplemented) - Address bits 15-9
+// BDTPTRH (8 bit value) - Address bits 23-16
+// BDTPTRU (8 bit value) - Address bits 31-24
+// So, 9 bits of BDT_BASE address are discarded
+U1BDTP1bits.BDTPTRL = (USB_BDT_BASE_ADDRESS >> 8);
+U1BDTP2bits.BDTPTRH = (USB_BDT_BASE_ADDRESS >> 16);
+U1BDTP3bits.BDTPTRU = (USB_BDT_BASE_ADDRESS >> 24);
 
 U1CONbits.USBEN = 1;	// Enable USB
 

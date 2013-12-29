@@ -46,3 +46,7 @@
         #pragma config PWP      = OFF   // Program Flash write protect
         #pragma config CP       = OFF   // Code Protect
 #endif
+
+// According PIC32 Family Reference Manual Section 3.4.1
+// Physical Address = Virtual address & 0x1FFFFFFF
+#define VIRTUAL_TO_PHYSICAL(a)  ((uint32_t)(a) & 0x1fffffff)

@@ -129,7 +129,9 @@ static buffer_descriptor USB_BDT[12] __attribute__ ((aligned(512)))={0};
 uint32_t USB_BDT_BASE_ADDRESS;
 USB_BDT_BASE_ADDRESS = VIRTUAL_TO_PHYSICAL(USB_BDT);
 
-// According to PIC32 Family Reference manual following registers hold base address bits
+// According to PIC32 Family Reference manual BDT base address is split between three registers
+// Following registers hold base address bits:
+//
 // BDTPTRL (7 bit with bit 0 unimplemented) - Address bits 15-9
 // BDTPTRH (8 bit value) - Address bits 23-16
 // BDTPTRU (8 bit value) - Address bits 31-24

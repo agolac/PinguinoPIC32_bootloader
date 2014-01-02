@@ -127,4 +127,4 @@ vector_\_XX\()_ISR_wrapper:
 
 # See p32mx440f256h.h etc. for vector assignments for specific processor.
 # Create wrappers for ISRs used in a specific application.
-	ISR_wrapper	57, USB_Handle_Interrupt # USB Interrupt handler
+	ISR_wrapper	57, USB_ISR_Wrapper_vector_57 # USB Interrupt handler

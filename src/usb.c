@@ -141,7 +141,11 @@ U1BDTP3bits.BDTPTRU = (USB_BDT_BASE_ADDRESS >> 24);
 
 U1CONbits.USBEN = 1;	// Enable USB
 }
+void USB_Handle_Interrupt (void);
+void USB_ISR_Wrapper_vector_57 (void) {
+	USB_Handle_Interrupt();
+}
 
-void __attribute__ ((section(".vector_57"))) USB_Handle_Interrupt (void) {
+void USB_Handle_Interrupt (void) {
 
 }

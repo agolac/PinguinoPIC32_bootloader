@@ -9,7 +9,7 @@ INCDIR=	-I include \
 	-I include/non-free/$(PROCESSOR) \
 	-I usb/include \
 	-I src
-CFLAGS=	-EL -Os -march=$(ARCH) \
+CFLAGS=	-EL -Os -march=$(ARCH) -fdollars-in-identifiers \
 	-D __$(PROCESSOR)__ -D __PIC32MX__ \
 	-Wl,-Map=output.map,--cref -nostartfiles \
 	-L include/non-free/$(PROCESSOR) \
@@ -19,4 +19,5 @@ bootloader:
 	$(CC) $(INCDIR) $(CFLAGS) -o bootloader src/main.c \
 			include/non-free/32MX440F256H/processor.o \
 			src/crt0.S \
-			src/usb.c
+			src/usb.c \
+			src/ISRwrapper.S

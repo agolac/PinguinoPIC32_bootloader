@@ -120,7 +120,6 @@ U1PWRCbits.USBPWR = 1; 	// - Start USB clock
 			// - Select USB as owner of the necessary USB pins
 			// - Enable USB transciever
 			// - Enable USB comparators
-IEC1bits.USBIE = 0;	// Just in case, disable USB interrupts before initialization
 
 U1OTGCONbits.OTGEN = 0;	// Disable OTG
 U1CONbits.HOSTEN = 0;	// Disabled as host

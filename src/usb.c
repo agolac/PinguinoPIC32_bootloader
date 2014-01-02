@@ -21,7 +21,7 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	--------------------------------------------------------------------------*/
 
-#include <usb_descriptors.h>
+#include <usb_chapter_9.h>
 #include <stdint.h>
 #include <xc.h>
 #include <usb_hal.h>
@@ -32,7 +32,7 @@ void InitUSB (void) {
 device_descriptor USB_Device_descriptor;
 
 USB_Device_descriptor.bLength 			= 0x12;   // Descriptor size in bytes
-USB_Device_descriptor.bDescriptorType 		= 0x01;	  // 01h constant for Device descriptor
+USB_Device_descriptor.bDescriptorType 		= DEVICE;
 USB_Device_descriptor.bcdUSB			= 0x0200; // 0200h for USB 2.0
 USB_Device_descriptor.bDeviceClass		= 0x00;	  // Zero for no device class
 USB_Device_descriptor.bDeviceSubclass		= 0x00;	  // Zero for no device subclass
@@ -50,8 +50,8 @@ USB_Device_descriptor.bNumConfigurations	= 0x01;	  // Number of configurations
 configuration_descriptor USB_Configuration_descriptor;
 
 USB_Configuration_descriptor.bLength		= 0x09; // Descriptor size in bytes
-USB_Configuration_descriptor.bDescriptorType	= 0x02; // 02h constant for Configuration descriptor
-USB_Configuration_descriptor.wTotalLength	= 0x029;// Total length of this and subordinate descript.
+USB_Configuration_descriptor.bDescriptorType	= CONFIGURATION;
+USB_Configuration_descriptor.wTotalLength	= 0x29;// Total length of this and subordinate descript.
 USB_Configuration_descriptor.bNumInterfaces	= 0x01; // 01h for only one interface
 USB_Configuration_descriptor.bConfigurationValue= 0x01; // 01h for this configuration
 USB_Configuration_descriptor.iConfiguration	= 0x00; // Zero if no string descriptor
@@ -61,7 +61,7 @@ USB_Configuration_descriptor.bMaxPower		= 0xFA; // (2mAx250)=2xFAh=max 500 mA
 interface_descriptor USB_Interface_descriptor;
 
 USB_Interface_descriptor.bLength		= 0x09; // Descriptor size in bytes
-USB_Interface_descriptor.bDescriptorType	= 0x04; // 04h constant for Interface descriptor
+USB_Interface_descriptor.bDescriptorType	= INTERFACE;
 USB_Interface_descriptor.bInterfaceNumber	= 0x00; // Zero for default interface number
 USB_Interface_descriptor.bAlternateSetting	= 0x00; // No alternate setting
 USB_Interface_descriptor.bNumEndpoints		= 0x02;	// Endpoints in addition to zero endpoint
@@ -82,7 +82,7 @@ USB_HID_descriptor.bDescriptortype		= 0x22;	// 22h report descriptor type
 endpoint_descriptor USB_Endpoint_descriptor_OUT;
 
 USB_Endpoint_descriptor_OUT.bLength		= 0x07; // Descriptor size in bytes
-USB_Endpoint_descriptor_OUT.bDescriptorType	= 0x05; // 05h constant for Endpoint descriptor
+USB_Endpoint_descriptor_OUT.bDescriptorType	= ENDPOINT;
 USB_Endpoint_descriptor_OUT.bEndpointAddress	= 0x01; // 00000001b, Endpoint number=1, Bit 7=0=OUT 
 USB_Endpoint_descriptor_OUT.bmAttributes	= 0x03; // Innterrupt transfer
 USB_Endpoint_descriptor_OUT.wMaxPacketSize	= 0x0040;// 64 bytes max packet size
@@ -127,7 +127,7 @@ U1CONbits.HOSTEN = 0;	// Disabled as host
 
 static buffer_descriptor USB_BDT[12] __attribute__ ((aligned(512)))={0};
 uint32_t USB_BDT_BASE_ADDRESS;
-USB_BDT_BASE_ADDRESS = VIRTUAL_TO_PHYSICAL(USB_BDT);
+USB_BDT_BASE_ADDRESS = VIRTUAL_TO_PHYSICAL(USB_BDT); // Must be physical address
 
 // According to PIC32 Family Reference manual BDT base address is split between three registers
 // Following registers hold base address bits:
@@ -141,5 +141,4 @@ U1BDTP2bits.BDTPTRH = (USB_BDT_BASE_ADDRESS >> 16);
 U1BDTP3bits.BDTPTRU = (USB_BDT_BASE_ADDRESS >> 24);
 
 U1CONbits.USBEN = 1;	// Enable USB
-
 }

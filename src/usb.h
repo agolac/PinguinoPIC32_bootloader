@@ -1,2 +1,2 @@
-void USB_Handle_Interrupt (void);
-(void) USB_ISR_Wrapper_vector_57 (void) __attribute__ ((section(".vector_57")));
+__attribute__ ((interrupt)) void USB_Handle_Interrupt (void);
+__attribute__ ((section(".vector_57"))) void USB_ISR_Wrapper_vector_57 (void);

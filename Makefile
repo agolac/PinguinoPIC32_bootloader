@@ -9,7 +9,7 @@ INCDIR=	-I include \
 	-I include/non-free/$(PROCESSOR) \
 	-I usb/include \
 	-I src
-CFLAGS=	-EL -Os -march=$(ARCH) -fdollars-in-identifiers \
+CFLAGS=	-EL -Os -march=$(ARCH) -fdollars-in-identifiers -msoft-float \
 	-D __$(PROCESSOR)__ -D __PIC32MX__ \
 	-Wl,-Map=output.map,--cref -nostartfiles \
 	-L include/non-free/$(PROCESSOR) \

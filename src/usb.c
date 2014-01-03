@@ -26,6 +26,7 @@
 #include <xc.h>
 #include <usb_hal.h>
 #include <config.h>
+#include <usb.h>
 
 void InitUSB (void) {
 
@@ -141,7 +142,7 @@ U1BDTP3bits.BDTPTRU = (USB_BDT_BASE_ADDRESS >> 24);
 
 U1CONbits.USBEN = 1;	// Enable USB
 }
-void USB_Handle_Interrupt (void);
+
 void USB_ISR_Wrapper_vector_57 (void) {
 	USB_Handle_Interrupt();
 }

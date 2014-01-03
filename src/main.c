@@ -24,10 +24,12 @@
 #include <xc.h>
 #include <config.h>
 #include <stdint.h>
+#include <usb.h>
 
 int main (void) {
 
 while (1) {
+	InitUSB();
 	TRISBSET = 0x0080;
 return 1;
 }

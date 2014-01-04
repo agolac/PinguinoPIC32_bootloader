@@ -27,10 +27,11 @@
 #include <usb.h>
 
 int main (void) {
-//	InitUSB();
+	InitUSB();
 while (1) {
-	TRISGCLR = _PORTG_RG6_MASK;
-	PORTGSET = _PORTG_RG6_MASK;
+//        TRISGCLR = _PORTG_RG6_MASK;
+//        PORTGSET = _PORTG_RG6_MASK;
+
 }
 return 1;
 }

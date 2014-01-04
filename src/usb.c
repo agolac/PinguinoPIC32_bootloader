@@ -141,12 +141,18 @@ U1BDTP2bits.BDTPTRH = (USB_BDT_BASE_ADDRESS >> 16);
 U1BDTP3bits.BDTPTRU = (USB_BDT_BASE_ADDRESS >> 24);
 
 U1CONbits.USBEN = 1;	// Enable USB
+U1IEbits.ATTACHIE = 1;	
+U1OTGIEbits.ACTVIE = 1;
+IEC1bits.USBIE = 1;
+U1IE = 0xFB;
+U1EIE = 0xFF;
 }
 
-void USB_ISR_Wrapper_vector_57 (void) {
+__attribute__ ((section(".vector_57"))) void USB_ISR_Wrapper_vector_57 (void) {
 	USB_Handle_Interrupt();
 }
 
-void USB_Handle_Interrupt (void) {
-
+__attribute__((interrupt)) void USB_Handle_Interrupt (void) {
+        TRISGCLR = _PORTG_RG6_MASK;
+        PORTGSET = _PORTG_RG6_MASK;
 }

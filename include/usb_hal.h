@@ -28,3 +28,11 @@ typedef struct __attribute__ ((packed)) {
 
 } buffer_descriptor;
 
+// PIC32 Family Reference Manual, Chapter 27, Figure 27-2
+typedef struct {
+	int32_t	BDTBA		:23;
+	int8_t	ENDPOINT	:4;
+	int8_t	DIR		:1;
+	int8_t	PPBI		:1;
+	int8_t			:2;
+} bdt_address_generation;

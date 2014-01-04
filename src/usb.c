@@ -124,7 +124,8 @@ U1PWRCbits.USBPWR = 1; 	// - Start USB clock
 
 U1OTGCONbits.OTGEN = 0;	// Disable OTG
 U1CONbits.HOSTEN = 0;	// Disabled as host
-
+//INTCON.VS = _vector_spacing;
+INTCONSET = _INTCON_MVEC_MASK;
 static buffer_descriptor USB_BDT[12] __attribute__ ((aligned(512)))={0};
 uint32_t USB_BDT_BASE_ADDRESS;
 USB_BDT_BASE_ADDRESS = VIRTUAL_TO_PHYSICAL(USB_BDT); // Must be physical address
@@ -140,15 +141,33 @@ U1BDTP1bits.BDTPTRL = (USB_BDT_BASE_ADDRESS >> 8);
 U1BDTP2bits.BDTPTRH = (USB_BDT_BASE_ADDRESS >> 16);
 U1BDTP3bits.BDTPTRU = (USB_BDT_BASE_ADDRESS >> 24);
 
-U1CONbits.USBEN = 1;	// Enable USB
-U1IEbits.ATTACHIE = 1;	
-U1OTGIEbits.ACTVIE = 1;
+USB_BDT[0].ControlFormat.DTS = 1;
+USB_BDT[0].ControlFormat.UOWN = 1;
+USB_BDT[1].ControlFormat.DTS = 1;
+USB_BDT[1].ControlFormat.UOWN = 1;
+
+U1EP0bits.EPRXEN = 1;
+U1EP0bits.EPTXEN = 1;
+U1EP0bits.EPHSHK = 1;
+U1EP0bits.EPSTALL= 0;
+U1EP1bits.EPRXEN = 1;
+U1EP1bits.EPTXEN = 1;
+U1EP1bits.EPHSHK = 1;
+U1EP2bits.EPRXEN = 1;
+U1EP2bits.EPTXEN = 1;
+
+IEC1bits.USBIE = 0;
+IPC11bits.USBIP = 1;
+IPC11bits.USBIS = 1;
+IFS1CLR = _IFS1_USBIF_MASK;
 IEC1bits.USBIE = 1;
-U1IE = 0xFB;
-U1EIE = 0xFF;
+U1CONbits.USBEN = 1;	// Enable USB
+asm volatile ("ei"); 
+U1IE = 0xFF;
+
 }
 
-__attribute__ ((section(".vector_57"))) void USB_ISR_Wrapper_vector_57 (void) {
+__attribute__ ((section(".vector_45"))) void USB_ISR_Wrapper_vector_45 (void) {
 	USB_Handle_Interrupt();
 }
 

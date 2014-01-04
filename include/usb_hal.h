@@ -36,3 +36,9 @@ typedef struct {
 	int8_t	PPBI		:1;
 	int8_t			:2;
 } bdt_address_generation;
+
+enum {
+	TOKEN_TYPE_IN 		= 0x09,
+	TOKEN_TYPE_OUT		= 0x01,
+	TOKEN_TYPE_SETUP	= 0x0D,
+} token_type_indicator_bits;

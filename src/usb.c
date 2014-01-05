@@ -167,11 +167,7 @@ U1IE = 0xFF;
 
 }
 
-__attribute__ ((section(".vector_45"))) void USB_ISR_Wrapper_vector_45 (void) {
-	USB_Handle_Interrupt();
-}
-
-__attribute__((interrupt)) void USB_Handle_Interrupt (void) {
+USB_Handle_Interrupts (void) {
         TRISGCLR = _PORTG_RG6_MASK;
         PORTGSET = _PORTG_RG6_MASK;
 }

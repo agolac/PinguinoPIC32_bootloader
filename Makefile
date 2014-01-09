@@ -19,5 +19,5 @@ bootloader:
 	$(CC) $(INCDIR) $(CFLAGS) -o bootloader src/main.c \
 			include/non-free/32MX440F256H/processor.o \
 			src/crt0.S \
-			src/usb.c \
-			src/ISRwrapper.S
+			src/libpic32.a \
+			src/usb.c

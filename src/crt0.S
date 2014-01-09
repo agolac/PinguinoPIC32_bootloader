@@ -7,8 +7,8 @@
  *
  * Processor:       PIC32
  *
- * Compiler:        chipKIT for PIC32 MCUs
- *
+ * Compiler:        MPLAB XC32
+ *                  MPLAB X IDE
  * Company:         Microchip Technology Inc.
  *
  * Software License Agreement
@@ -42,18 +42,25 @@
  *
  ********************************************************************/
 
-#include <p32xxxx.h>
+#include <xc.h>
 #include <cp0defs.h>
 #include <regdef.h>
 
 #ifdef __LIBBUILD__
-   .file 1 "libc/startup/crt0.S"
+   # Replace the standard debugging information with a simple filename. This 
+   # prevents the library build directory from showing up in MPLAB IDE. It 
+   # also effectively disables source-line debugging.
+   .file 1 "libpic32/startup/crt0.S"
    .loc 1 0
 #endif
 
 #if (__C32_VERSION__ < 200)
 #define USE_OLD_INIT
 #define USE_OLD_DOTSECTION
+#endif
+
+#if (__XC32_VERSION > 1000) && !defined(CPP_INIT)
+#define CPP_INIT
 #endif
 
         ##################################################################
@@ -88,13 +95,13 @@ _startup:
         ##################################################################
         # If entered because of an NMI, jump to the NMI handler.
         ##################################################################
-#        mfc0    k0,_CP0_STATUS
-#        ext     k0,k0,19,1              # Extract NMI bit
-#        beqz    k0,_no_nmi
-#        nop
-#        la      k0,_nmi_handler
-#        jr      k0
-#        nop
+        mfc0    k0,_CP0_STATUS
+        ext     k0,k0,19,1              # Extract NMI bit
+        beqz    k0,_no_nmi
+        nop
+        la      k0,_nmi_handler
+        jr      k0
+        nop
 _no_nmi:
 
         ##################################################################
@@ -132,9 +139,9 @@ _no_nmi:
         ##################################################################
         # Call the "on reset" procedure
         ##################################################################
-#        la      t0,_on_reset
-#        jalr    t0
-#        nop
+        la      t0,_on_reset
+        jalr    t0
+        nop
 
         ##################################################################
         # Clear uninitialized data sections
@@ -180,48 +187,48 @@ _init_check:
         # copying RAM functions from program flash to data memory and
         # initializing bus matrix registers.
         ##################################################################
-#        la      t1,_ramfunc_length
-#        beqz    t1,_ramfunc_done
-#        nop
+        la      t1,_ramfunc_length
+        beqz    t1,_ramfunc_done
+        nop
 
         ##################################################################
         # Copy RAM functions from program flash to data memory
         #   src=_ramfunc_image_begin dst=_ramfunc_begin stop=_ramfunc_end
         ##################################################################
-#        la      t0,_ramfunc_image_begin
-#        la      t1,_ramfunc_begin
-#        la      t2,_ramfunc_end
+        la      t0,_ramfunc_image_begin
+        la      t1,_ramfunc_begin
+        la      t2,_ramfunc_end
 
 _init_ramfunc:
-#        lw      t3,(t0)
-#        sw      t3,(t1)
-#        addu    t0,4
-#        addu    t1,4
+        lw      t3,(t0)
+        sw      t3,(t1)
+        addu    t0,4
+        addu    t1,4
 _ramfunc_check:
-#        bltu    t1,t2,_init_ramfunc
-#        nop
+        bltu    t1,t2,_init_ramfunc
+        nop
 
         ##################################################################
         # Initialize bus matrix registers if RAM functions exist in the
         # application
         ##################################################################
-#        la      t1,_bmxdkpba_address
-#        la      t2,BMXDKPBA
-#        sw      t1,0(t2)
-#        la      t1,_bmxdudba_address
-#        la      t2,BMXDUDBA
-#        sw      t1,0(t2)
-#        la      t1,_bmxdupba_address
-#        la      t2,BMXDUPBA
-#        sw      t1,0(t2)
+        la      t1,_bmxdkpba_address
+        la      t2,BMXDKPBA
+        sw      t1,0(t2)
+        la      t1,_bmxdudba_address
+        la      t2,BMXDUDBA
+        sw      t1,0(t2)
+        la      t1,_bmxdupba_address
+        la      t2,BMXDUPBA
+        sw      t1,0(t2)
 _ramfunc_done:
 
 #else
         ##################################################################
         # Initialize data using the linker-generated .dinit table
         ##################################################################
-	.equiv FMT_CLEAR,0
-	.equiv FMT_COPY,1
+        .equiv FMT_CLEAR,0
+        .equiv FMT_COPY,1
 _dinit_init:
         la      t0,_dinit_addr
 
@@ -230,38 +237,38 @@ _dinit_init:
 #define LEN t2
 #define FMT t3
 
-0:	lw	DST,0(SRC)
-	beqz    DST,9f
-	addu	SRC,4
-	lw	LEN,0(SRC)
-	addu	SRC,4
-	lw	FMT,0(SRC)
-	beq	FMT,$0,_dinit_clear
-	addu	SRC,4
+0:      lw      DST,0(SRC)
+        beqz    DST,9f
+        addu    SRC,4
+        lw      LEN,0(SRC)
+        addu    SRC,4
+        lw      FMT,0(SRC)
+        beq     FMT,$0,_dinit_clear
+        addu    SRC,4
 
 _dinit_copy:
-	lbu	t4,0(SRC)
-	subu	LEN,1
-	addu	SRC,1
-	sb	t4,0(DST)
-	bne	LEN,$0,_dinit_copy
-	addu	DST,1
+        lbu     t4,0(SRC)
+        subu    LEN,1
+        addu    SRC,1
+        sb      t4,0(DST)
+        bne     LEN,$0,_dinit_copy
+        addu    DST,1
 
-	b	_dinit_end
+        b       _dinit_end
         nop
 
 _dinit_clear:
-	sb	$0,(DST)
-	subu	LEN,1
-	bne	LEN,$0,_dinit_clear
-	addu	DST,1
+        sb      $0,(DST)
+        subu    LEN,1
+        bne     LEN,$0,_dinit_clear
+        addu    DST,1
 
 _dinit_end:
-	addu	SRC,3
+        addu    SRC,3
         addiu   LEN,$0,0xFFFFFFFC
         and     SRC,LEN,SRC
         lw      DST,0(SRC)
-	bne	DST,$0,0b
+        bne     DST,$0,0b
         nop
 9:
 
@@ -269,23 +276,23 @@ _dinit_end:
         # If there are no RAM functions, skip the next section --
         # initializing bus matrix registers.
         ##################################################################
-#        la      t1,_ramfunc_begin
-#        beqz    t1,_ramfunc_done
-#        nop
+        la      t1,_ramfunc_begin
+        beqz    t1,_ramfunc_done
+        nop
 
         ##################################################################
         # Initialize bus matrix registers if RAM functions exist in the
         # application
         ##################################################################
-#        la      t1,_bmxdkpba_address
-#        la      t2,BMXDKPBA
-#        sw      t1,0(t2)
-#        la      t1,_bmxdudba_address
-#        la      t2,BMXDUDBA
-#        sw      t1,0(t2)
-#        la      t1,_bmxdupba_address
-#        la      t2,BMXDUPBA
-#        sw      t1,0(t2)
+        la      t1,_bmxdkpba_address
+        la      t2,BMXDKPBA
+        sw      t1,0(t2)
+        la      t1,_bmxdudba_address
+        la      t2,BMXDUDBA
+        sw      t1,0(t2)
+        la      t1,_bmxdupba_address
+        la      t2,BMXDUPBA
+        sw      t1,0(t2)
 _ramfunc_done:
 
 #endif
@@ -295,13 +302,13 @@ _ramfunc_done:
         ##################################################################
         # Initialize Count register
         ##################################################################
-#        mtc0    zero,_CP0_COUNT
+        mtc0    zero,_CP0_COUNT
 
         ##################################################################
         # Initialize Compare register
         ##################################################################
-#        li      t2,-1
-#        mtc0    t2,_CP0_COMPARE
+        li      t2,-1
+        mtc0    t2,_CP0_COMPARE
 
         ##################################################################
         # Initialize EBase register
@@ -312,10 +319,10 @@ _ramfunc_done:
         ##################################################################
         # Initialize IntCtl register
         ##################################################################
-#        la      t1,_vector_spacing
-#        li      t2,0                    # Clear t2 and
-#        ins     t2,t1,5,5               # shift value to VS field
-#        mtc0    t2,_CP0_INTCTL
+        la      t1,_vector_spacing
+        li      t2,0                    # Clear t2 and
+        ins     t2,t1,5,5               # shift value to VS field
+        mtc0    t2,_CP0_INTCTL
 
         ##################################################################
         # Initialize CAUSE registers
@@ -323,8 +330,8 @@ _ramfunc_done:
         # - Use special exception vector <IV = 1>
         # - Clear pending software interrupts <IP1:IP0 = 0>
         ##################################################################
-#        li      t1,0x00800000
-#        mtc0    t1,_CP0_CAUSE
+        li      t1,0x00800000
+        mtc0    t1,_CP0_CAUSE
 
         ##################################################################
         # Initialize STATUS register
@@ -341,27 +348,27 @@ _ramfunc_done:
         # - Exception level is normal <EXL = 0>
         # - Interrupts are disabled <IE = 0>
         ##################################################################
-#        mfc0    t0,_CP0_CONFIG
-#        ext     t1,t0,22,1              # Extract UDI from Config register
-#        sll     t1,t1,17                # Move UDI to Status.CEE location
-#        mfc0    t0,_CP0_STATUS
-#        and     t0,t0,0x00580000        # Preserve SR, NMI, and BEV
-#        or      t0,t1,t0                # Include Status.CEE (from UDI)
-#        mtc0    t0,_CP0_STATUS
+        mfc0    t0,_CP0_CONFIG
+        ext     t1,t0,22,1              # Extract UDI from Config register
+        sll     t1,t1,17                # Move UDI to Status.CEE location
+        mfc0    t0,_CP0_STATUS
+        and     t0,t0,0x00580000        # Preserve SR, NMI, and BEV
+        or      t0,t1,t0                # Include Status.CEE (from UDI)
+        mtc0    t0,_CP0_STATUS
 
         ##################################################################
         # Call the "on bootstrap" procedure
         ##################################################################
-#        la      t0,_on_bootstrap
-#        jalr    t0
-#        nop
+        la      t0,_on_bootstrap
+        jalr    t0
+        nop
 
         ##################################################################
         # Initialize Status<BEV> for normal exception vectors
         ##################################################################
-#        mfc0    t0,_CP0_STATUS
-#        and     t0,t0,0xffbfffff        # Clear BEV
-#        mtc0    t0,_CP0_STATUS
+        mfc0    t0,_CP0_STATUS
+        and     t0,t0,0xffbfffff        # Clear BEV
+        mtc0    t0,_CP0_STATUS
 
         ##################################################################
         # Call main. We do this via a thunk in the text section so that
@@ -376,7 +383,6 @@ _ramfunc_done:
         jr      t0
         nop
 
-
         .end _startup
 
         ##################################################################
@@ -384,36 +390,36 @@ _ramfunc_done:
         # Jumps to _bootstrap_exception_handler
         ##################################################################
 #if defined(USE_OLD_DOTSECTION)
-#        .section .bev_handler,"ax",@progbits
+        .section .bev_handler,"ax",@progbits
 #else
-#        .section .bev_handler,code
+        .section .bev_handler,code
 #endif
-#        .set noreorder
-#        .ent _bev_exception
+        .set noreorder
+        .ent _bev_exception
 _bev_exception:
-#        la      k0,_bootstrap_exception_handler
-#        jr      k0
-#        nop
+        la      k0,_bootstrap_exception_handler
+        jr      k0
+        nop
 
-#        .end _bev_exception
+        .end _bev_exception
 
         ##################################################################
         # General Exception Vector Handler
         # Jumps to _general_exception_handler
         ##################################################################
 #if defined(USE_OLD_DOTSECTION)
-#        .section .gen_handler,"ax",@progbits
+        .section .gen_handler,"ax",@progbits
 #else
-#        .section .gen_handler,code
+        .section .gen_handler,code
 #endif
-#        .set noreorder
-#        .ent _gen_exception
+        .set noreorder
+        .ent _gen_exception
 _gen_exception:
-#        la      k0,_general_exception_context
-#        jr      k0
-#        nop
+        la      k0,_general_exception_context
+        jr      k0
+        nop
 
-#        .end _gen_exception
+        .end _gen_exception
 
 #if defined(USE_OLD_DOTSECTION)
         .text
@@ -422,6 +428,22 @@ _gen_exception:
 #endif
         .ent _main_entry
 _main_entry:
+
+#if defined(CPP_INIT)
+        .weak _init
+        # call .init section to run constructors etc
+        lui	a0,%hi(_init)
+        addiu	sp,sp,-24
+        addiu	a0,a0,%lo(_init)
+        beq	a0,$0,2f
+        sw	$31,20(sp)	 #,
+        jalr	a0
+        nop
+2:
+#endif
+        and     a0,a0,0
+        and     a1,a1,0
+
         ##################################################################
         # Call main
         ##################################################################
@@ -441,5 +463,7 @@ __crt0_exit:
 1:
         b       1b
         nop
+        
         .globl __crt0_exit
         .end _main_entry
+

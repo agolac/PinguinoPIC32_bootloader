@@ -1,12 +1,13 @@
 /*************************************************************************
  * Processor-specific object file.  Contains SFR definitions.
  *************************************************************************/
-ENTRY(_reset)
-EXTERN(_min_heap_size _min_stack_size)
-PROVIDE(_min_stack_size = 0x400);
-PROVIDE(_min_heap_size = 512);
-PROVIDE(_DBG_CODE_ADDR = 0xBFC02000);
-PROVIDE(_DBG_CODE_SIZE = 0xFF0);
+INPUT("processor.o")
+
+/*************************************************************************
+ * Processor-specific peripheral libraries are optional
+ *************************************************************************/
+OPTIONAL("libmchp_peripheral.a")
+OPTIONAL("libmchp_peripheral_32MX440F256H.a")
 
 /*************************************************************************
  * For interrupt vector handling
@@ -43,10 +44,9 @@ _GEN_EXCPT_ADDR                = _ebase_address + 0x180;
  *************************************************************************/
 MEMORY
 {
-  kseg0_program_mem     (rx)  : ORIGIN = 0x9D000000, LENGTH = 0x5000 /* Bootloader code 20 Kb */
-  kseg0_boot_mem              : ORIGIN = 0x9FC00490, LENGTH = 0x970  /* Bootloader C startup */
-  exception_mem               : ORIGIN = 0x9FC01000, LENGTH = 0x1000 /* Bootloader exception */
-
+  kseg0_program_mem     (rx)  : ORIGIN = 0x9D000000, LENGTH = 0x40000
+  kseg0_boot_mem              : ORIGIN = 0x9FC00490, LENGTH = 0x970
+  exception_mem               : ORIGIN = 0x9FC01000, LENGTH = 0x1000
   kseg1_boot_mem              : ORIGIN = 0xBFC00000, LENGTH = 0x490
   debug_exec_mem              : ORIGIN = 0xBFC02000, LENGTH = 0xFF0
   config3                     : ORIGIN = 0xBFC02FF0, LENGTH = 0x4
@@ -76,36 +76,4 @@ SECTIONS
   .config_BFC02FFC : {
     KEEP(*(.config_BFC02FFC))
   } > config0
-}
-
-SECTIONS
-{
-  /* Boot sections */
-  .reset _RESET_ADDR :
-  {
-    KEEP(*(.reset))
-    KEEP(*(.reset.startup))
-  } > kseg1_boot_mem
-
-  .bev_excpt _BEV_EXCPT_ADDR :
-  {
-    KEEP(*(.bev_handler))
-  } > kseg1_boot_mem
-
-  .dbg_excpt _DBG_EXCPT_ADDR (NOLOAD) :
-  {
-    . += (DEFINED (_DEBUGGER) ? 0x8 : 0x0);
-  } > kseg1_boot_mem
-
-  .dbg_code _DBG_CODE_ADDR (NOLOAD) :
-  {
-    . += (DEFINED (_DEBUGGER) ? _DBG_CODE_SIZE : 0x0);
-  } > debug_exec_mem
-
-  .app_excpt _GEN_EXCPT_ADDR :
-  {
-    KEEP(*(.gen_handler))
-  } > exception_mem
-
-
 }

@@ -12,6 +12,7 @@ INCDIR=	-I include \
 CFLAGS=	-EL -Os -march=$(ARCH) -fdollars-in-identifiers -msoft-float \
 	-D __$(PROCESSOR)__ -D __PIC32MX__ \
 	-Wl,-Map=output.map,--cref -nostartfiles \
+	-Wl,--defsym,_min_heap_size=16384 \
 	-L include/non-free/$(PROCESSOR) \
 	-T include/non-free/$(PROCESSOR)/procdefs.ld \
 	-T include/non-free/$(PROCESSOR)/elf32pic32mx.x

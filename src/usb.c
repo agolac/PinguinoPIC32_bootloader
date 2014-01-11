@@ -153,30 +153,36 @@ U1EP2bits.EPTXEN = 1;
 
 void InitializeUSB (void) {
 
-	U1IE = 0;
 
 	U1PWRCSET = _U1PWRC_USBPWR_MASK; 	// - Start USB clock
 						// - Allow USB interrupt to be activated
 						// - Select USB as owner of the necessary USB pins
 						// - Enable USB transciever
 						// - Enable USB comparators
+	U1IRCLR = 0xFF;				// Clear Interrupts Status register
+	U1EIRCLR= 0XFF;				// Clear Error Interrupt Status register
+	U1IECLR = 0xFF;				// Clear Interrupt Enable Regiser
+	U1EIECLR= 0XFF;				// Clear all Error Interrupt Enable bits
+
 	U1OTGCONCLR = _U1OTGCON_OTGEN_MASK;	// Disable OTG
 	U1CONCLR = _U1CON_HOSTEN_MASK;		// Disabled as host
-	INTCONSET = _INTCON_MVEC_MASK;
 	IPC11SET = 7 << _IPC11_USBIP_POSITION;
 	IFS1CLR = _IFS1_USBIF_MASK;
 	IEC1SET = _IEC1_USBIE_MASK;
 	U1CONSET = _U1CON_USBEN_MASK;	// Enable USB
-	U1IE = 0xFF;
+
+	U1IESET = 0xFF;
+	U1EIESET= 0xFF;
+
 }
 
 void __attribute__((interrupt)) USB_Interrupt_Handler (void) {
       
-	IFS1CLR = _IFS1_USBIF_MASK;
 	TRISGCLR = _PORTG_RG6_MASK;
         PORTGSET = _PORTG_RG6_MASK;
 }
 
 void __attribute__((section(".vector_45"))) ISR_USB_vector_45(void) {
+	IFS1CLR = _IFS1_USBIF_MASK;
 	USB_Interrupt_Handler();
 }

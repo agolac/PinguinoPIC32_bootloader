@@ -25,10 +25,11 @@
 #include <stdint.h>
 #include <xc.h>
 #include <usb_hal.h>
-#include <config.h>
 #include <usb.h>
 #include <cp0defs.h>
 #include <regdef.h>
+#include <config.h>
+
 void InitUSB (void) {
 
 device_descriptor USB_Device_descriptor;

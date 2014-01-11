@@ -28,7 +28,7 @@
 
 #if defined(__32MX440F256H__)
         #pragma config UPLLEN   = ON    // USB Clock (48 Mhz)
-//        #pragma config UPLLDIV  = DIV_2 // USB PLL Divider
+        #pragma config UPLLIDIV	= DIV_2 // USB PLL Divider
         #pragma config FPLLMUL  = MUL_20// PLL Multiplier
         #pragma config FPLLIDIV = DIV_2 // PLL Input Divider
         #pragma config FPLLODIV = DIV_1 // PLL Output Divider
@@ -37,16 +37,17 @@
         #pragma config FWDTEN   = OFF   // Watchdog Timer
         #pragma config WDTPS    = PS1   // Watchdog Timer Postscale
         #pragma config POSCMOD  = HS    // Primary Oscillator
-//        #pragma config SOSCEN   = OFF   // Secondary Oscillator
+        #pragma config FSOSCEN  = OFF   // Secondary Oscillator
         #pragma config FNOSC    = PRIPLL// Oscillator selection
         #pragma config OSCIOFNC = OFF   // CLKO Enable
         #pragma config FCKSM    = CSECMD// Clock switching enabled, Fail Safe Clock Monitor Disabled
         #pragma config DEBUG    = OFF   // Background Debugger
-        #pragma config BWP      = OFF   // Boot Flash write protect
+        #pragma config BWP      = ON    // Boot Flash write protect
         #pragma config PWP      = OFF   // Program Flash write protect
         #pragma config CP       = OFF   // Code Protect
 #endif
 
-// According PIC32 Family Reference Manual Section 3.4.1
-// Physical Address = Virtual address & 0x1FFFFFFF
+
+// PIC32 Family Reference Manual Section 3.4.1
+// 	-> Physical Address = Virtual address & 0x1FFFFFFF
 #define VIRTUAL_TO_PHYSICAL(a)  ((uint32_t)(a) & 0x1fffffff)

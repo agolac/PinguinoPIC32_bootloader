@@ -30,7 +30,7 @@
 #include <regdef.h>
 #include <config.h>
 
-void InitUSB (void) {
+void USB_Enumerate_Device (void) {
 
 device_descriptor USB_Device_descriptor;
 
@@ -151,7 +151,7 @@ U1EP2bits.EPTXEN = 1;
 
 }
 
-void InitializeUSB (void) {
+void USB_Initialize_Device (void) {
 
 
 	U1PWRCSET = _U1PWRC_USBPWR_MASK; 	// - Start USB clock
@@ -178,11 +178,11 @@ void InitializeUSB (void) {
 
 void __attribute__((interrupt)) USB_Interrupt_Handler (void) {
       
+	IFS1CLR = _IFS1_USBIF_MASK;
 	TRISGCLR = _PORTG_RG6_MASK;
         PORTGSET = _PORTG_RG6_MASK;
 }
 
 void __attribute__((section(".vector_45"))) ISR_USB_vector_45(void) {
-	IFS1CLR = _IFS1_USBIF_MASK;
 	USB_Interrupt_Handler();
 }

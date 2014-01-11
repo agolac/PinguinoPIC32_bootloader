@@ -55,7 +55,8 @@ void __attribute__ ((nomips16)) INTEnableSystemMultiVectoredInt(void)
 int main (void) {
 
 	INTEnableSystemMultiVectoredInt();
-	InitializeUSB();
+	USB_Initialize_Device ();
+	USB_Enumerate_Device ();
 while (1) {
 //        TRISGCLR = _PORTG_RG6_MASK;
 //        PORTGCLR = _PORTG_RG6_MASK;

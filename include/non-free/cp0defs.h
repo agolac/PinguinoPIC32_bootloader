@@ -34,6 +34,7 @@
 
 #ifndef __CP0DEFS__H__
 #define __CP0DEFS__H__
+#include <regdef.h>
 /*
  * Contains register definitions for the CP0 registers and bits and macros
  * to access the CP0 registers.  This file is included in xc.h and

@@ -173,7 +173,7 @@ enum DescriptorTypes {
 	INTERFACE_POWER			= 0x08,
 };
 
-enum DeviceState {
+enum USBDeviceState {
 	DEVICE_ATTACHED,
 	DEVICE_POWERED,
 	DEVICE_DEFAULT,

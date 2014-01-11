@@ -1,13 +1,10 @@
 /*************************************************************************
  * Processor-specific object file.  Contains SFR definitions.
  *************************************************************************/
-INPUT("processor.o")
 
 /*************************************************************************
  * Processor-specific peripheral libraries are optional
  *************************************************************************/
-OPTIONAL("libmchp_peripheral.a")
-OPTIONAL("libmchp_peripheral_32MX440F256H.a")
 
 /*************************************************************************
  * For interrupt vector handling

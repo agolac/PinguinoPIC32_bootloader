@@ -27,7 +27,8 @@
 #include <usb_hal.h>
 #include <config.h>
 #include <usb.h>
-
+#include <cp0defs.h>
+#include <regdef.h>
 void InitUSB (void) {
 
 device_descriptor USB_Device_descriptor;
@@ -116,16 +117,7 @@ USB_String_Serial.bLength			= sizeof (USB_String_Serial);
 USB_String_Serial.bDescriptorType		= 0x03;
 USB_String_Serial.bSTRING[4]			= 'v','1','.','0';
 
-U1PWRCbits.USBPWR = 1; 	// - Start USB clock
-			// - Allow USB interrupt to be activated
-			// - Select USB as owner of the necessary USB pins
-			// - Enable USB transciever
-			// - Enable USB comparators
 
-U1OTGCONbits.OTGEN = 0;	// Disable OTG
-U1CONbits.HOSTEN = 0;	// Disabled as host
-//INTCON.VS = _vector_spacing;
-INTCONSET = _INTCON_MVEC_MASK;
 static buffer_descriptor USB_BDT[12] __attribute__ ((aligned(512)))={0};
 uint32_t USB_BDT_BASE_ADDRESS;
 USB_BDT_BASE_ADDRESS = VIRTUAL_TO_PHYSICAL(USB_BDT); // Must be physical address
@@ -156,17 +148,31 @@ U1EP1bits.EPHSHK = 1;
 U1EP2bits.EPRXEN = 1;
 U1EP2bits.EPTXEN = 1;
 
-IPC11SET = 16 << _IPC11_USBIP_POSITION;
-IFS1CLR = _IFS1_USBIF_MASK;
-IEC1SET = _IEC1_USBIE_MASK;
-U1CONbits.USBEN = 1;	// Enable USB
-asm volatile ("ei"); 
-U1IE = 0xFF;
+}
 
+void InitializeUSB (void) {
+
+	U1IE = 0;
+
+	U1PWRCSET = _U1PWRC_USBPWR_MASK; 	// - Start USB clock
+						// - Allow USB interrupt to be activated
+						// - Select USB as owner of the necessary USB pins
+						// - Enable USB transciever
+						// - Enable USB comparators
+	U1OTGCONCLR = _U1OTGCON_OTGEN_MASK;	// Disable OTG
+	U1CONCLR = _U1CON_HOSTEN_MASK;		// Disabled as host
+	INTCONSET = _INTCON_MVEC_MASK;
+	IPC11SET = 7 << _IPC11_USBIP_POSITION;
+	IFS1CLR = _IFS1_USBIF_MASK;
+	IEC1SET = _IEC1_USBIE_MASK;
+	U1CONSET = _U1CON_USBEN_MASK;	// Enable USB
+	U1IE = 0xFF;
 }
 
 void __attribute__((interrupt)) USB_Interrupt_Handler (void) {
-        TRISGCLR = _PORTG_RG6_MASK;
+      
+	IFS1CLR = _IFS1_USBIF_MASK;
+	TRISGCLR = _PORTG_RG6_MASK;
         PORTGSET = _PORTG_RG6_MASK;
 }
 

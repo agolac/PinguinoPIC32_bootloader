@@ -9,7 +9,7 @@ INCDIR=	-I include \
 	-I include/non-free/$(PROCESSOR) \
 	-I usb/include \
 	-I src
-CFLAGS=	-EL -Os -march=$(ARCH) -fdollars-in-identifiers -msoft-float \
+CFLAGS=	-EL -O -march=$(ARCH) -fdollars-in-identifiers -msoft-float \
 	-D __$(PROCESSOR)__ -D __PIC32MX__ \
 	-Wl,-Map=output.map,--cref -nostartfiles \
 	-Wl,--defsym,_min_heap_size=16384 \
